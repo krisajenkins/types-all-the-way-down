@@ -1,0 +1,253 @@
+#+OPTIONS: toc:nil num:nil timestamp:nil
+#+OPTIONS: reveal_history:t frag:t
+#+REVEAL_THEME: night
+#+REVEAL_TRANS: convex
+#+REVEAL_MIN_SCALE: 1.2
+#+REVEAL_MAX_SCALE: 3
+#+COPYRIGHT: © Kris Jenkins, 2016
+#+TITLE: Types All The Way Down
+#+AUTHOR: @krisajenkins
+
+* A Tale of a Haskell Startup
+- ClojureScript + Haskell + PostgreSQL
+- Technically adept
+** We Didn't Have The Problems I'd Expect
+#+ATTR_REVEAL: :frag (appear)
+- Inconsistent data formats.
+- Need for data to change.
+- Speed of change.
+- Reliability.
+
+** The Problems We Actually Had
+#+ATTR_REVEAL: :frag (appear)
+- Database queries failing at runtime.
+- Frontend and backend disagreeing.
+** These Are The Same Problem
+1. The backend has changed, the database hasn't.
+2. The backend has changed, the frontend hasn't.
+#+ATTR_REVEAL: :frag (appear)
+This is a is schema synchronization problem.
+** Solve:
+#+ATTR_REVEAL: :frag (appear)
+- Keep all three tiers' schemas consistent.
+- The same types, all the way down.
+- Reliably & cheaply.
+* First Solution
+One language to rule them all.
+
+#+ATTR_REVEAL: :frag (appear)
+Signs point to Nope.
+
+* Second Solution
+Some setup required.
+* The Backend
+...is /mostly/ solved.
+
+#+ATTR_REVEAL: :frag (appear)
+Persistent.
+** Generating DB Migrations
+** Define a Table
+#+BEGIN_SRC haskell
+share [mkPersist sqlSettings, mkMigrate "migrateEpc"]
+      [persistLowerCase|
+  EnergyDisplayCertificate
+    buildingNumber Text Maybe sqltype=text
+    postcode Text sqltype=text
+    energyRatingDescription Text sqltype=text
+    renewablesThermal Text sqltype=text
+    renewablesElectrical Text sqltype=text
+    floorArea Double Maybe
+    lodgementDate UTCTime
+
+    deriving Eq Show Generic
+|]
+#+END_SRC
+** Get an Automatic Migration-Calculator
+#+BEGIN_SRC ghci
+  ghci> :t migrateEpc
+  migrateEpc :: Database.Persist.Sql.Types.Migration
+#+END_SRC
+
+** Run It
+#+BEGIN_SRC haskell
+  migrations :: SqlPersistM ()
+  migrations = mapM_ runMigration [migrateEpc, ...]
+
+  do pool <- ...
+     runSqlPersistMPool migrations sql
+#+END_SRC
+** Check The Table
+#+BEGIN_SRC shell
+db=# \d energy_display_certificate
+       Table "public.energy_display_certificate"
+          Column           |           Type           | ...
+---------------------------+--------------------------+----
+ id                        | bigint                   | ...
+ building_number           | text                     | ...
+ postcode                  | text                     | ...
+ energy_rating_description | text                     | ...
+ renewables_thermal        | text                     | ...
+ renewables_electrical     | text                     | ...
+ floor_area                | double precision         | ...
+ lodgement_date            | timestamp with time zone | ...
+Indexes:
+    "energy_display_certificate_pkey" PRIMARY KEY, btree (id)
+#+END_SRC
+
+** Migrations are Calculated
+
+And optionally applied whenever safe:
+
+#+BEGIN_SRC shell
+$ project-startup
+Reading config: project.yaml
+Migrating: ALTER TABLE "energy_display_certificate"
+    ALTER COLUMN "postcode" TYPE text
+Migrating: ALTER TABLE "energy_display_certificate"
+    ADD COLUMN "floor_area" DOUBLE PRECISION NULL
+#+END_SRC
+** Score: 2/3
+The backend and database are in sync.
+
+#+ATTR_REVEAL: :frag (appear)
+- Surprisingly seamless.
+- Occasional manual intervention.
+  - Never missed.
+  - Guided hints.
+* The Frontend
+...needs more attention.
+
+** Generate Frontend Code
+** For Which Frontend Languages
+...would this make sense?
+** GHC Generics
+ - Haskell datatypes have a simple structure.
+ - Encode that structure as data.
+ - We know how to transform data.
+ - So we can build a new description of the same datastructure.
+
+*** Example
+ Let's look at a generic encoding.
+
+ #+BEGIN_SRC haskell
+ $ stack ghci
+ Prelude> :set -XRankNTypes
+ Prelude> import GHC.Generics
+ #+END_SRC
+
+*** Example
+ Let's look at the generic encoding for =Maybe a=
+
+ #+BEGIN_SRC haskell
+ :kind! forall a. Rep (Maybe a)
+ forall a. Rep (Maybe a) :: * -> *
+ = Datatype {..."Maybe"...} (
+     Constructor {..."Nothing"...} Unit
+     :+:
+     Constructor {..."Just"...} (Field NoSelector (Recursive a))
+   )
+ #+END_SRC
+*** Arbitrary Types
+ #+BEGIN_SRC haskell :exports none
+ :set -XDeriveGeneric
+ #+END_SRC
+ #+BEGIN_SRC haskell
+ data Person = Person { name :: String,
+                        age :: Int }
+               deriving (Show,Eq,Generic)
+ #+END_SRC
+ #+ATTR_REVEAL: :frag (appear)
+ #+BEGIN_SRC haskell
+ Prelude GHC.Generics> :kind! Rep Person
+ Rep Person :: * -> *
+ = Datatype {..."Person"...} (
+     Constructor {..."Person"...} (
+         Selector {..."name"... (Ref String)}
+         Selector {..."age"... (Ref Int)}
+     )
+ )
+ #+END_SRC
+*** Describing Datatypes
+ #+ATTR_REVEAL: :frag (appear)
+ - Metadata
+    - Datatypes (=data Maybe a = ...=)
+    - Constructors (=Person ...=)
+    - Fields (=Just a=)
+ - References
+    - Concrete (=Person String=)
+    - Abstract (=Just a=)
+*** Describing Datatypes (2)
+ #+ATTR_REVEAL: :frag (appear)
+ - Combination
+    - OR (=Nothing | Just a=)
+    - AND (=Person String Int=)
+ - Extras
+    - Constructors without fields (=Nothing=)
+    - Datatypes without constructors (=data Empty=)
+
+*** Really
+ #+BEGIN_SRC haskell
+ :kind! forall a. Rep (Maybe a)
+ forall a. Rep (Maybe a) :: * -> *
+ = D1 GHC.Generics.D1Maybe
+     (C1 GHC.Generics.C1_0Maybe U1
+      :+: C1 GHC.Generics.C1_1Maybe (S1 NoSelector (Rec0 a)))
+ #+END_SRC
+
+
+** TODO
+
+#+BEGIN_SRC haskell
+instance (GenericElmType f
+         ,GenericElmType g) =>
+         GenericElmType (f :*: g) where
+  genericToElmType _ =
+    Product (genericToElmType (undefined :: f p))
+            (genericToElmType (undefined :: g p))
+#+END_SRC
+
+** Usage
+
+#+BEGIN_SRC haskell
+main :: IO ()
+main =
+  exportToElm "/some/where/elm/src" $
+  specsToDir
+    [Spec ["Generated","Types"]
+          [toElmTypeSource (Proxy :: Proxy EnergyDisplayCertificate)]]
+#+END_SRC
+
+** Output
+
+#+BEGIN_SRC elm
+  type alias EnergyDisplayCertificate =
+      { buildingNumber : String
+      , postcode : String
+      , energyRatingDescription : String
+      , renewablesThermal : String
+      , renewablesElectrical : String
+      , floorArea : Maybe Double
+      , lodgementDate : Date
+      }
+#+END_SRC
+*** Available
+
+- =elm-export= on Hackage
+- github.com/krisajenkins/elm-export
+* The Net Result
+** Haskell
+Many errors caught at compile time.
+** Elm
+Many errors caught at compile time.
+** PostgreSQL
+Many relationships enforced at compile time.
+** Haskell + Elm + PostgreSQL
+Even more errors caught at compile time!
+** H.E.L.P. Is At Hand
+- *H* askell
+- *E* lm
+- *L* inux
+- *P* ostgreSQL
+
+#+ATTR_REVEAL: :frag (appear)
+/Though the general idea could work for lots of stacks.../
