@@ -1,6 +1,6 @@
 #+OPTIONS: toc:nil num:nil timestamp:nil
 #+OPTIONS: reveal_history:t frag:t
-#+REVEAL_THEME: night
+#+REVEAL_THEME: white
 #+REVEAL_TRANS: convex
 #+REVEAL_MIN_SCALE: 1.2
 #+REVEAL_MAX_SCALE: 3
@@ -8,7 +8,7 @@
 #+TITLE: Types All The Way Down
 #+AUTHOR: @krisajenkins
 
-* A Tale of a Haskell Startup
+* A Tale Of A Haskell Startup
 - ClojureScript + Haskell + PostgreSQL
 - Technically adept
 ** We Didn't Have The Problems I'd Expect
@@ -46,7 +46,7 @@ Some setup required.
 #+ATTR_REVEAL: :frag (appear)
 Persistent.
 ** Generating DB Migrations
-** Define a Table
+** Define A Table
 #+BEGIN_SRC haskell
 share [mkPersist sqlSettings, mkMigrate "migrateEpc"]
       [persistLowerCase|
@@ -62,7 +62,7 @@ share [mkPersist sqlSettings, mkMigrate "migrateEpc"]
     deriving Eq Show Generic
 |]
 #+END_SRC
-** Get an Automatic Migration-Calculator
+** Get An Automatic Migration-Calculator
 #+BEGIN_SRC ghci
   ghci> :t migrateEpc
   migrateEpc :: Database.Persist.Sql.Types.Migration
@@ -94,7 +94,7 @@ Indexes:
     "energy_display_certificate_pkey" PRIMARY KEY, btree (id)
 #+END_SRC
 
-** Migrations are Calculated
+** Migrations Are Calculated
 
 And optionally applied whenever safe:
 
@@ -106,7 +106,7 @@ Migrating: ALTER TABLE "energy_display_certificate"
 Migrating: ALTER TABLE "energy_display_certificate"
     ADD COLUMN "floor_area" DOUBLE PRECISION NULL
 #+END_SRC
-** Score: 2/3
+** That Takes Care Of The Server
 The backend and database are in sync.
 
 #+ATTR_REVEAL: :frag (appear)
@@ -124,9 +124,9 @@ The backend and database are in sync.
  - Haskell datatypes have a simple structure.
  - Encode that structure as data.
  - We know how to transform data.
- - So we can build a new description of the same datastructure.
+ - We can write out the same structure in a different form.
 
-*** Example
+*** Example                                                        :noexport:
  Let's look at a generic encoding.
 
  #+BEGIN_SRC haskell
@@ -136,11 +136,20 @@ The backend and database are in sync.
  #+END_SRC
 
 *** Example
- Let's look at the generic encoding for =Maybe a=
+ Let's look at =Maybe a=
+
+#+BEGIN_SRC haskell
+  data Maybe a
+    = Nothing
+    | Just a
+ #+END_SRC
+*** Example
+ Let's look at the generic encoding, =Rep (Maybe a)=
 
  #+BEGIN_SRC haskell
  :kind! forall a. Rep (Maybe a)
  forall a. Rep (Maybe a) :: * -> *
+
  = Datatype {..."Maybe"...} (
      Constructor {..."Nothing"...} Unit
      :+:
@@ -185,7 +194,7 @@ The backend and database are in sync.
     - Constructors without fields (=Nothing=)
     - Datatypes without constructors (=data Empty=)
 
-*** Really
+*** Confess The Fugly
  #+BEGIN_SRC haskell
  :kind! forall a. Rep (Maybe a)
  forall a. Rep (Maybe a) :: * -> *
@@ -194,39 +203,45 @@ The backend and database are in sync.
       :+: C1 GHC.Generics.C1_1Maybe (S1 NoSelector (Rec0 a)))
  #+END_SRC
 
-
-** TODO
+*** Confess The Fugly (2)
 
 #+BEGIN_SRC haskell
-instance (GenericElmType f
-         ,GenericElmType g) =>
-         GenericElmType (f :*: g) where
-  genericToElmType _ =
-    Product (genericToElmType (undefined :: f p))
-            (genericToElmType (undefined :: g p))
+instance (Constructor c ,GenericElmType f)
+  => GenericElmType (C1 c f) where
+  genericToElmType constructor@(M1 x) =
+    if conIsRecord constructor
+       then Record name body
+       else Constructor name body
+    where name = conName constructor
+          body = genericToElmType x
 #+END_SRC
 
 ** Usage
 
 #+BEGIN_SRC haskell
-main :: IO ()
-main =
-  exportToElm "/some/where/elm/src" $
-  specsToDir
-    [Spec ["Generated","Types"]
-          [toElmTypeSource (Proxy :: Proxy EnergyDisplayCertificate)]]
+  main :: IO ()
+  main =
+    exportToElm "/some/where/elm/src" $
+    specsToDir
+      [Spec ["Generated","Types"]
+            ["import Date exposing (Date)"
+            ,toElmTypeSource (Proxy :: Proxy EnergyDisplayCertificate)]]
 #+END_SRC
 
 ** Output
 
 #+BEGIN_SRC elm
+  module Generated.Types exposing (..)
+
+  import Date exposing (Date)
+
   type alias EnergyDisplayCertificate =
       { buildingNumber : String
       , postcode : String
       , energyRatingDescription : String
       , renewablesThermal : String
       , renewablesElectrical : String
-      , floorArea : Maybe Double
+      , floorArea : Maybe Float
       , lodgementDate : Date
       }
 #+END_SRC
