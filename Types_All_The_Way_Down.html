@@ -9,7 +9,7 @@
 </style>
 <link rel="stylesheet" href="reveal.js/css/reveal.css"/>
 
-<link rel="stylesheet" href="reveal.js/css/theme/night.css" id="theme"/>
+<link rel="stylesheet" href="reveal.js/css/theme/white.css" id="theme"/>
 
 
 <!-- If the query includes 'print-pdf', include the PDF print sheet -->
@@ -31,7 +31,7 @@
 
 <section>
 <section id="slide-orgheadline5">
-<h2 id="orgheadline5">A Tale of a Haskell Startup</h2>
+<h2 id="orgheadline5">A Tale Of A Haskell Startup</h2>
 <ul>
 <li>ClojureScript + Haskell + PostgreSQL</li>
 <li>Technically adept</li>
@@ -114,27 +114,27 @@ Persistent.
 <h3 id="orgheadline8">Generating DB Migrations</h3>
 </section>
 <section id="slide-orgheadline9">
-<h3 id="orgheadline9">Define a Table</h3>
+<h3 id="orgheadline9">Define A Table</h3>
 <div class="org-src-container">
 
-<pre  class="src src-haskell"><span style="color: #F92672; font-style: italic;">share</span> <span style="color: #66d9ef;">[</span>mkPersist sqlSettings, mkMigrate <span style="color: #E6DB74;">"migrateEpc"</span><span style="color: #66d9ef;">]</span>
-      <span style="color: #66d9ef;">[</span>persistLowerCase<span style="color: #E6DB74;">|</span>
-<span style="color: #E6DB74;">  EnergyDisplayCertificate</span>
-<span style="color: #E6DB74;">    buildingNumber Text Maybe sqltype=text</span>
-<span style="color: #E6DB74;">    postcode Text sqltype=text</span>
-<span style="color: #E6DB74;">    energyRatingDescription Text sqltype=text</span>
-<span style="color: #E6DB74;">    renewablesThermal Text sqltype=text</span>
-<span style="color: #E6DB74;">    renewablesElectrical Text sqltype=text</span>
-<span style="color: #E6DB74;">    floorArea Double Maybe</span>
-<span style="color: #E6DB74;">    lodgementDate UTCTime</span>
+<pre  class="src src-haskell"><span style="color: #0000ff;">share</span> <span style="color: #66d9ef;">[</span>mkPersist sqlSettings, mkMigrate <span style="color: #8b2252;">"migrateEpc"</span><span style="color: #66d9ef;">]</span>
+      <span style="color: #66d9ef;">[</span>persistLowerCase<span style="color: #8b2252;">|</span>
+<span style="color: #8b2252;">  EnergyDisplayCertificate</span>
+<span style="color: #8b2252;">    buildingNumber Text Maybe sqltype=text</span>
+<span style="color: #8b2252;">    postcode Text sqltype=text</span>
+<span style="color: #8b2252;">    energyRatingDescription Text sqltype=text</span>
+<span style="color: #8b2252;">    renewablesThermal Text sqltype=text</span>
+<span style="color: #8b2252;">    renewablesElectrical Text sqltype=text</span>
+<span style="color: #8b2252;">    floorArea Double Maybe</span>
+<span style="color: #8b2252;">    lodgementDate UTCTime</span>
 
-<span style="color: #E6DB74;">    deriving Eq Show Generic</span>
-<span style="color: #E6DB74;">|</span><span style="color: #66d9ef;">]</span>
+<span style="color: #8b2252;">    deriving Eq Show Generic</span>
+<span style="color: #8b2252;">|</span><span style="color: #66d9ef;">]</span>
 </pre>
 </div>
 </section>
 <section id="slide-orgheadline10">
-<h3 id="orgheadline10">Get an Automatic Migration-Calculator</h3>
+<h3 id="orgheadline10">Get An Automatic Migration-Calculator</h3>
 <div class="org-src-container">
 
 <pre  class="src src-ghci">ghci&gt; :t migrateEpc
@@ -147,10 +147,10 @@ migrateEpc :: Database.Persist.Sql.Types.Migration
 <h3 id="orgheadline11">Run It</h3>
 <div class="org-src-container">
 
-<pre  class="src src-haskell"><span style="color: #F92672; font-style: italic;">migrations</span> <span style="color: #F92672;">::</span> <span style="color: #66D9EF;">SqlPersistM</span> <span style="color: #66d9ef;">()</span>
-<span style="color: #F92672; font-style: italic;">migrations</span> <span style="color: #F92672;">=</span> mapM_ runMigration <span style="color: #66d9ef;">[</span>migrateEpc, <span style="color: #F92672;">...</span><span style="color: #66d9ef;">]</span>
+<pre  class="src src-haskell"><span style="color: #0000ff;">migrations</span> <span style="color: #a0522d;">::</span> <span style="color: #228b22;">SqlPersistM</span> <span style="color: #66d9ef;">()</span>
+<span style="color: #0000ff;">migrations</span> <span style="color: #a0522d;">=</span> mapM_ runMigration <span style="color: #66d9ef;">[</span>migrateEpc, <span style="color: #a0522d;">...</span><span style="color: #66d9ef;">]</span>
 
-<span style="color: #66D9EF;">do</span> pool <span style="color: #F92672;">&lt;-</span> <span style="color: #F92672;">...</span>
+<span style="color: #a020f0;">do</span> pool <span style="color: #a0522d;">&lt;-</span> <span style="color: #a0522d;">...</span>
    runSqlPersistMPool migrations sql
 </pre>
 </div>
@@ -159,8 +159,8 @@ migrateEpc :: Database.Persist.Sql.Types.Migration
 <h3 id="orgheadline12">Check The Table</h3>
 <div class="org-src-container">
 
-<pre  class="src src-shell"><span style="color: #F92672;">db</span>=# \d energy_display_certificate
-       Table <span style="color: #E6DB74;">"public.energy_display_certificate"</span>
+<pre  class="src src-shell"><span style="color: #a0522d;">db</span>=# \d energy_display_certificate
+       Table <span style="color: #8b2252;">"public.energy_display_certificate"</span>
           Column           |           Type           | ...
 ---------------------------+--------------------------+----
  id                        | bigint                   | ...
@@ -172,13 +172,13 @@ migrateEpc :: Database.Persist.Sql.Types.Migration
  floor_area                | double precision         | ...
  lodgement_date            | timestamp with time zone | ...
 Indexes:
-    <span style="color: #E6DB74;">"energy_display_certificate_pkey"</span> PRIMARY KEY, btree <span style="color: #66d9ef;">(</span>id<span style="color: #66d9ef;">)</span>
+    <span style="color: #8b2252;">"energy_display_certificate_pkey"</span> PRIMARY KEY, btree <span style="color: #66d9ef;">(</span>id<span style="color: #66d9ef;">)</span>
 </pre>
 </div>
 
 </section>
 <section id="slide-orgheadline13">
-<h3 id="orgheadline13">Migrations are Calculated</h3>
+<h3 id="orgheadline13">Migrations Are Calculated</h3>
 <p>
 And optionally applied whenever safe:
 </p>
@@ -187,15 +187,15 @@ And optionally applied whenever safe:
 
 <pre  class="src src-shell">$ project-startup
 Reading config: project.yaml
-Migrating: ALTER TABLE <span style="color: #E6DB74;">"energy_display_certificate"</span>
-    ALTER COLUMN <span style="color: #E6DB74;">"postcode"</span> TYPE text
-Migrating: ALTER TABLE <span style="color: #E6DB74;">"energy_display_certificate"</span>
-    ADD COLUMN <span style="color: #E6DB74;">"floor_area"</span> DOUBLE PRECISION NULL
+Migrating: ALTER TABLE <span style="color: #8b2252;">"energy_display_certificate"</span>
+    ALTER COLUMN <span style="color: #8b2252;">"postcode"</span> TYPE text
+Migrating: ALTER TABLE <span style="color: #8b2252;">"energy_display_certificate"</span>
+    ADD COLUMN <span style="color: #8b2252;">"floor_area"</span> DOUBLE PRECISION NULL
 </pre>
 </div>
 </section>
 <section id="slide-orgheadline14">
-<h3 id="orgheadline14">Score: 2/3</h3>
+<h3 id="orgheadline14">That Takes Care Of The Server</h3>
 <p>
 The backend and database are in sync.
 </p>
@@ -229,13 +229,13 @@ The backend and database are in sync.
 &#x2026;would this make sense?
 </p>
 </section>
-<section id="slide-orgheadline24">
-<h3 id="orgheadline24">GHC Generics</h3>
+<section id="slide-orgheadline25">
+<h3 id="orgheadline25">GHC Generics</h3>
 <ul>
 <li>Haskell datatypes have a simple structure.</li>
 <li>Encode that structure as data.</li>
 <li>We know how to transform data.</li>
-<li>So we can build a new description of the same datastructure.</li>
+<li>We can write out the same structure in a different form.</li>
 
 </ul>
 
@@ -243,32 +243,32 @@ The backend and database are in sync.
 <section id="slide-orgheadline18">
 <h4 id="orgheadline18">Example</h4>
 <p>
-Let's look at a generic encoding.
+Let's look at <code>Maybe a</code>
 </p>
 
 <div class="org-src-container">
 
-<pre  class="src src-haskell"><span style="color: #F92672;">$</span> stack ghci
-<span style="color: #66D9EF;">Prelude</span><span style="color: #F92672; font-style: italic;">&gt;</span> <span style="color: #66D9EF;">:</span>set <span style="color: #F92672;">-</span><span style="color: #66D9EF;">XRankNTypes</span>
-<span style="color: #66D9EF;">Prelude</span><span style="color: #F92672; font-style: italic;">&gt;</span> <span style="color: #66D9EF;">import</span> <span style="color: #66D9EF;">GHC.Generics</span>
+<pre  class="src src-haskell"><span style="color: #a020f0;">data</span> <span style="color: #228b22;">Maybe</span> a
+  <span style="color: #a0522d;">=</span> <span style="color: #228b22;">Nothing</span>
+  <span style="color: #a0522d;">|</span> <span style="color: #228b22;">Just</span> a
 </pre>
 </div>
-
 </section>
 <section id="slide-orgheadline19">
 <h4 id="orgheadline19">Example</h4>
 <p>
-Let's look at the generic encoding for <code>Maybe a</code>
+Let's look at the generic encoding, <code>Rep (Maybe a)</code>
 </p>
 
 <div class="org-src-container">
 
-<pre  class="src src-haskell"><span style="color: #66D9EF;">:</span>kind<span style="color: #F92672;">!</span> forall a<span style="color: #F92672;">.</span> <span style="color: #66D9EF;">Rep</span> <span style="color: #66d9ef;">(</span><span style="color: #66D9EF;">Maybe</span> a<span style="color: #66d9ef;">)</span>
-<span style="color: #F92672; font-style: italic;">forall</span> a<span style="color: #F92672;">.</span> <span style="color: #66D9EF;">Rep</span> <span style="color: #66d9ef;">(</span><span style="color: #66D9EF;">Maybe</span> a<span style="color: #66d9ef;">)</span> <span style="color: #F92672;">::</span> <span style="color: #F92672;">*</span> <span style="color: #F92672;">-&gt;</span> <span style="color: #F92672;">*</span>
-<span style="color: #F92672;">=</span> <span style="color: #66D9EF;">Datatype</span> <span style="color: #66d9ef;">{</span><span style="color: #F92672;">...</span><span style="color: #E6DB74;">"Maybe"</span><span style="color: #F92672;">...</span><span style="color: #66d9ef;">}</span> <span style="color: #66d9ef;">(</span>
-    <span style="color: #66D9EF;">Constructor</span> <span style="color: #a6e22e;">{</span><span style="color: #F92672;">...</span><span style="color: #E6DB74;">"Nothing"</span><span style="color: #F92672;">...</span><span style="color: #a6e22e;">}</span> <span style="color: #66D9EF;">Unit</span>
-    <span style="color: #66D9EF;">:+:</span>
-    <span style="color: #66D9EF;">Constructor</span> <span style="color: #a6e22e;">{</span><span style="color: #F92672;">...</span><span style="color: #E6DB74;">"Just"</span><span style="color: #F92672;">...</span><span style="color: #a6e22e;">}</span> <span style="color: #a6e22e;">(</span><span style="color: #66D9EF;">Field</span> <span style="color: #66D9EF;">NoSelector</span> <span style="color: #e6db74;">(</span><span style="color: #66D9EF;">Recursive</span> a<span style="color: #e6db74;">)</span><span style="color: #a6e22e;">)</span>
+<pre  class="src src-haskell"><span style="color: #228b22;">:</span>kind<span style="color: #a0522d;">!</span> forall a<span style="color: #a0522d;">.</span> <span style="color: #228b22;">Rep</span> <span style="color: #66d9ef;">(</span><span style="color: #228b22;">Maybe</span> a<span style="color: #66d9ef;">)</span>
+<span style="color: #0000ff;">forall</span> a<span style="color: #a0522d;">.</span> <span style="color: #228b22;">Rep</span> <span style="color: #66d9ef;">(</span><span style="color: #228b22;">Maybe</span> a<span style="color: #66d9ef;">)</span> <span style="color: #a0522d;">::</span> <span style="color: #a0522d;">*</span> <span style="color: #a0522d;">-&gt;</span> <span style="color: #a0522d;">*</span>
+
+<span style="color: #a0522d;">=</span> <span style="color: #228b22;">Datatype</span> <span style="color: #66d9ef;">{</span><span style="color: #a0522d;">...</span><span style="color: #8b2252;">"Maybe"</span><span style="color: #a0522d;">...</span><span style="color: #66d9ef;">}</span> <span style="color: #66d9ef;">(</span>
+    <span style="color: #228b22;">Constructor</span> <span style="color: #a6e22e;">{</span><span style="color: #a0522d;">...</span><span style="color: #8b2252;">"Nothing"</span><span style="color: #a0522d;">...</span><span style="color: #a6e22e;">}</span> <span style="color: #228b22;">Unit</span>
+    <span style="color: #228b22;">:+:</span>
+    <span style="color: #228b22;">Constructor</span> <span style="color: #a6e22e;">{</span><span style="color: #a0522d;">...</span><span style="color: #8b2252;">"Just"</span><span style="color: #a0522d;">...</span><span style="color: #a6e22e;">}</span> <span style="color: #a6e22e;">(</span><span style="color: #228b22;">Field</span> <span style="color: #228b22;">NoSelector</span> <span style="color: #e6db74;">(</span><span style="color: #228b22;">Recursive</span> a<span style="color: #e6db74;">)</span><span style="color: #a6e22e;">)</span>
   <span style="color: #66d9ef;">)</span>
 </pre>
 </div>
@@ -277,19 +277,19 @@ Let's look at the generic encoding for <code>Maybe a</code>
 <h4 id="orgheadline20">Arbitrary Types</h4>
 <div class="org-src-container">
 
-<pre  class="src src-haskell"><span style="color: #66D9EF;">data</span> <span style="color: #66D9EF;">Person</span> <span style="color: #F92672;">=</span> <span style="color: #66D9EF;">Person</span> <span style="color: #66d9ef;">{</span> name <span style="color: #F92672;">::</span> <span style="color: #66D9EF;">String</span>,
-                       age <span style="color: #F92672;">::</span> <span style="color: #66D9EF;">Int</span> <span style="color: #66d9ef;">}</span>
-              <span style="color: #66D9EF;">deriving</span> <span style="color: #66d9ef;">(</span><span style="color: #66D9EF;">Show</span>,<span style="color: #66D9EF;">Eq</span>,<span style="color: #66D9EF;">Generic</span><span style="color: #66d9ef;">)</span>
+<pre  class="src src-haskell"><span style="color: #a020f0;">data</span> <span style="color: #228b22;">Person</span> <span style="color: #a0522d;">=</span> <span style="color: #228b22;">Person</span> <span style="color: #66d9ef;">{</span> name <span style="color: #a0522d;">::</span> <span style="color: #228b22;">String</span>,
+                       age <span style="color: #a0522d;">::</span> <span style="color: #228b22;">Int</span> <span style="color: #66d9ef;">}</span>
+              <span style="color: #a020f0;">deriving</span> <span style="color: #66d9ef;">(</span><span style="color: #228b22;">Show</span>,<span style="color: #228b22;">Eq</span>,<span style="color: #228b22;">Generic</span><span style="color: #66d9ef;">)</span>
 </pre>
 </div>
 <div class="org-src-container">
 
-<pre  class="fragment (appear)"><span style="color: #66D9EF;">Prelude</span> <span style="color: #66D9EF;">GHC.Generics</span><span style="color: #F92672;">&gt;</span> <span style="color: #66D9EF;">:</span>kind<span style="color: #F92672;">!</span> <span style="color: #66D9EF;">Rep</span> <span style="color: #66D9EF;">Person</span>
-<span style="color: #66D9EF;">Rep</span> <span style="color: #66D9EF;">Person</span> <span style="color: #F92672;">::</span> <span style="color: #F92672;">*</span> <span style="color: #F92672;">-&gt;</span> <span style="color: #F92672;">*</span>
-<span style="color: #F92672;">=</span> <span style="color: #66D9EF;">Datatype</span> <span style="color: #66d9ef;">{</span><span style="color: #F92672;">...</span><span style="color: #E6DB74;">"Person"</span><span style="color: #F92672;">...</span><span style="color: #66d9ef;">}</span> <span style="color: #66d9ef;">(</span>
-    <span style="color: #66D9EF;">Constructor</span> <span style="color: #a6e22e;">{</span><span style="color: #F92672;">...</span><span style="color: #E6DB74;">"Person"</span><span style="color: #F92672;">...</span><span style="color: #a6e22e;">}</span> <span style="color: #a6e22e;">(</span>
-        <span style="color: #66D9EF;">Selector</span> <span style="color: #e6db74;">{</span><span style="color: #F92672;">...</span><span style="color: #E6DB74;">"name"</span><span style="color: #F92672;">...</span> <span style="color: #8f8f8f;">(</span><span style="color: #66D9EF;">Ref</span> <span style="color: #66D9EF;">String</span><span style="color: #8f8f8f;">)</span><span style="color: #e6db74;">}</span>
-        <span style="color: #66D9EF;">Selector</span> <span style="color: #e6db74;">{</span><span style="color: #F92672;">...</span><span style="color: #E6DB74;">"age"</span><span style="color: #F92672;">...</span> <span style="color: #8f8f8f;">(</span><span style="color: #66D9EF;">Ref</span> <span style="color: #66D9EF;">Int</span><span style="color: #8f8f8f;">)</span><span style="color: #e6db74;">}</span>
+<pre  class="fragment (appear)"><span style="color: #228b22;">Prelude</span> <span style="color: #228b22;">GHC.Generics</span><span style="color: #a0522d;">&gt;</span> <span style="color: #228b22;">:</span>kind<span style="color: #a0522d;">!</span> <span style="color: #228b22;">Rep</span> <span style="color: #228b22;">Person</span>
+<span style="color: #228b22;">Rep</span> <span style="color: #228b22;">Person</span> <span style="color: #a0522d;">::</span> <span style="color: #a0522d;">*</span> <span style="color: #a0522d;">-&gt;</span> <span style="color: #a0522d;">*</span>
+<span style="color: #a0522d;">=</span> <span style="color: #228b22;">Datatype</span> <span style="color: #66d9ef;">{</span><span style="color: #a0522d;">...</span><span style="color: #8b2252;">"Person"</span><span style="color: #a0522d;">...</span><span style="color: #66d9ef;">}</span> <span style="color: #66d9ef;">(</span>
+    <span style="color: #228b22;">Constructor</span> <span style="color: #a6e22e;">{</span><span style="color: #a0522d;">...</span><span style="color: #8b2252;">"Person"</span><span style="color: #a0522d;">...</span><span style="color: #a6e22e;">}</span> <span style="color: #a6e22e;">(</span>
+        <span style="color: #228b22;">Selector</span> <span style="color: #e6db74;">{</span><span style="color: #a0522d;">...</span><span style="color: #8b2252;">"name"</span><span style="color: #a0522d;">...</span> <span style="color: #8f8f8f;">(</span><span style="color: #228b22;">Ref</span> <span style="color: #228b22;">String</span><span style="color: #8f8f8f;">)</span><span style="color: #e6db74;">}</span>
+        <span style="color: #228b22;">Selector</span> <span style="color: #e6db74;">{</span><span style="color: #a0522d;">...</span><span style="color: #8b2252;">"age"</span><span style="color: #a0522d;">...</span> <span style="color: #8f8f8f;">(</span><span style="color: #228b22;">Ref</span> <span style="color: #228b22;">Int</span><span style="color: #8f8f8f;">)</span><span style="color: #e6db74;">}</span>
     <span style="color: #a6e22e;">)</span>
 <span style="color: #66d9ef;">)</span>
 </pre>
@@ -334,29 +334,30 @@ Let's look at the generic encoding for <code>Maybe a</code>
 
 </section>
 <section id="slide-orgheadline23">
-<h4 id="orgheadline23">Really</h4>
+<h4 id="orgheadline23">Confess The Fugly</h4>
 <div class="org-src-container">
 
-<pre  class="src src-haskell"><span style="color: #66D9EF;">:</span>kind<span style="color: #F92672;">!</span> forall a<span style="color: #F92672;">.</span> <span style="color: #66D9EF;">Rep</span> <span style="color: #66d9ef;">(</span><span style="color: #66D9EF;">Maybe</span> a<span style="color: #66d9ef;">)</span>
-<span style="color: #F92672; font-style: italic;">forall</span> a<span style="color: #F92672;">.</span> <span style="color: #66D9EF;">Rep</span> <span style="color: #66d9ef;">(</span><span style="color: #66D9EF;">Maybe</span> a<span style="color: #66d9ef;">)</span> <span style="color: #F92672;">::</span> <span style="color: #F92672;">*</span> <span style="color: #F92672;">-&gt;</span> <span style="color: #F92672;">*</span>
-<span style="color: #F92672;">=</span> <span style="color: #66D9EF;">D1</span> <span style="color: #66D9EF;">GHC.Generics.D1Maybe</span>
-    <span style="color: #66d9ef;">(</span><span style="color: #66D9EF;">C1</span> <span style="color: #66D9EF;">GHC.Generics.C1_0Maybe</span> <span style="color: #66D9EF;">U1</span>
-     <span style="color: #66D9EF;">:+:</span> <span style="color: #66D9EF;">C1</span> <span style="color: #66D9EF;">GHC.Generics.C1_1Maybe</span> <span style="color: #a6e22e;">(</span><span style="color: #66D9EF;">S1</span> <span style="color: #66D9EF;">NoSelector</span> <span style="color: #e6db74;">(</span><span style="color: #66D9EF;">Rec0</span> a<span style="color: #e6db74;">)</span><span style="color: #a6e22e;">)</span><span style="color: #66d9ef;">)</span>
+<pre  class="src src-haskell"><span style="color: #228b22;">:</span>kind<span style="color: #a0522d;">!</span> forall a<span style="color: #a0522d;">.</span> <span style="color: #228b22;">Rep</span> <span style="color: #66d9ef;">(</span><span style="color: #228b22;">Maybe</span> a<span style="color: #66d9ef;">)</span>
+<span style="color: #0000ff;">forall</span> a<span style="color: #a0522d;">.</span> <span style="color: #228b22;">Rep</span> <span style="color: #66d9ef;">(</span><span style="color: #228b22;">Maybe</span> a<span style="color: #66d9ef;">)</span> <span style="color: #a0522d;">::</span> <span style="color: #a0522d;">*</span> <span style="color: #a0522d;">-&gt;</span> <span style="color: #a0522d;">*</span>
+<span style="color: #a0522d;">=</span> <span style="color: #228b22;">D1</span> <span style="color: #228b22;">GHC.Generics.D1Maybe</span>
+    <span style="color: #66d9ef;">(</span><span style="color: #228b22;">C1</span> <span style="color: #228b22;">GHC.Generics.C1_0Maybe</span> <span style="color: #228b22;">U1</span>
+     <span style="color: #228b22;">:+:</span> <span style="color: #228b22;">C1</span> <span style="color: #228b22;">GHC.Generics.C1_1Maybe</span> <span style="color: #a6e22e;">(</span><span style="color: #228b22;">S1</span> <span style="color: #228b22;">NoSelector</span> <span style="color: #e6db74;">(</span><span style="color: #228b22;">Rec0</span> a<span style="color: #e6db74;">)</span><span style="color: #a6e22e;">)</span><span style="color: #66d9ef;">)</span>
 </pre>
 </div>
 
-
 </section>
-<section id="slide-orgheadline25">
-<h3 id="orgheadline25"><span class="todo TODO">TODO</span> </h3>
+<section id="slide-orgheadline24">
+<h4 id="orgheadline24">Confess The Fugly (2)</h4>
 <div class="org-src-container">
 
-<pre  class="src src-haskell"><span style="color: #66D9EF;">instance</span> <span style="color: #66d9ef;">(</span><span style="color: #66D9EF;">GenericElmType</span> f
-         ,<span style="color: #66D9EF;">GenericElmType</span> g<span style="color: #66d9ef;">)</span> <span style="color: #F92672;">=&gt;</span>
-         <span style="color: #66D9EF;">GenericElmType</span> <span style="color: #66d9ef;">(</span>f <span style="color: #66D9EF;">:*:</span> g<span style="color: #66d9ef;">)</span> <span style="color: #66D9EF;">where</span>
-  genericToElmType <span style="color: #66D9EF;">_</span> <span style="color: #F92672;">=</span>
-    <span style="color: #66D9EF;">Product</span> <span style="color: #66d9ef;">(</span>genericToElmType <span style="color: #a6e22e;">(</span>undefined <span style="color: #F92672;">::</span> f p<span style="color: #a6e22e;">)</span><span style="color: #66d9ef;">)</span>
-            <span style="color: #66d9ef;">(</span>genericToElmType <span style="color: #a6e22e;">(</span>undefined <span style="color: #F92672;">::</span> g p<span style="color: #a6e22e;">)</span><span style="color: #66d9ef;">)</span>
+<pre  class="src src-haskell"><span style="color: #a020f0;">instance</span> <span style="color: #66d9ef;">(</span><span style="color: #228b22;">Constructor</span> c ,<span style="color: #228b22;">GenericElmType</span> f<span style="color: #66d9ef;">)</span>
+  <span style="color: #a0522d;">=&gt;</span> <span style="color: #228b22;">GenericElmType</span> <span style="color: #66d9ef;">(</span><span style="color: #228b22;">C1</span> c f<span style="color: #66d9ef;">)</span> <span style="color: #a020f0;">where</span>
+  genericToElmType constructor<span style="color: #a0522d;">@</span><span style="color: #66d9ef;">(</span><span style="color: #228b22;">M1</span> x<span style="color: #66d9ef;">)</span> <span style="color: #a0522d;">=</span>
+    <span style="color: #a020f0;">if</span> conIsRecord constructor
+       <span style="color: #a020f0;">then</span> <span style="color: #228b22;">Record</span> name body
+       <span style="color: #a020f0;">else</span> <span style="color: #228b22;">Constructor</span> name body
+    <span style="color: #a020f0;">where</span> name <span style="color: #a0522d;">=</span> conName constructor
+          body <span style="color: #a0522d;">=</span> genericToElmType x
 </pre>
 </div>
 
@@ -365,12 +366,13 @@ Let's look at the generic encoding for <code>Maybe a</code>
 <h3 id="orgheadline26">Usage</h3>
 <div class="org-src-container">
 
-<pre  class="src src-haskell"><span style="color: #F92672; font-style: italic;">main</span> <span style="color: #F92672;">::</span> <span style="color: #66D9EF;">IO</span> <span style="color: #66d9ef;">()</span>
-<span style="color: #F92672; font-style: italic;">main</span> <span style="color: #F92672;">=</span>
-  exportToElm <span style="color: #E6DB74;">"/some/where/elm/src"</span> <span style="color: #F92672;">$</span>
+<pre  class="src src-haskell"><span style="color: #0000ff;">main</span> <span style="color: #a0522d;">::</span> <span style="color: #228b22;">IO</span> <span style="color: #66d9ef;">()</span>
+<span style="color: #0000ff;">main</span> <span style="color: #a0522d;">=</span>
+  exportToElm <span style="color: #8b2252;">"/some/where/elm/src"</span> <span style="color: #a0522d;">$</span>
   specsToDir
-    <span style="color: #66d9ef;">[</span><span style="color: #66D9EF;">Spec</span> <span style="color: #a6e22e;">[</span><span style="color: #E6DB74;">"Generated"</span>,<span style="color: #E6DB74;">"Types"</span><span style="color: #a6e22e;">]</span>
-          <span style="color: #a6e22e;">[</span>toElmTypeSource <span style="color: #e6db74;">(</span><span style="color: #66D9EF;">Proxy</span> <span style="color: #F92672;">::</span> <span style="color: #66D9EF;">Proxy</span> <span style="color: #66D9EF;">EnergyDisplayCertificate</span><span style="color: #e6db74;">)</span><span style="color: #a6e22e;">]</span><span style="color: #66d9ef;">]</span>
+    <span style="color: #66d9ef;">[</span><span style="color: #228b22;">Spec</span> <span style="color: #a6e22e;">[</span><span style="color: #8b2252;">"Generated"</span>,<span style="color: #8b2252;">"Types"</span><span style="color: #a6e22e;">]</span>
+          <span style="color: #a6e22e;">[</span><span style="color: #8b2252;">"import Date exposing (Date)"</span>
+          ,toElmTypeSource <span style="color: #e6db74;">(</span><span style="color: #228b22;">Proxy</span> <span style="color: #a0522d;">::</span> <span style="color: #228b22;">Proxy</span> <span style="color: #228b22;">EnergyDisplayCertificate</span><span style="color: #e6db74;">)</span><span style="color: #a6e22e;">]</span><span style="color: #66d9ef;">]</span>
 </pre>
 </div>
 
@@ -379,14 +381,18 @@ Let's look at the generic encoding for <code>Maybe a</code>
 <h3 id="orgheadline28">Output</h3>
 <div class="org-src-container">
 
-<pre  class="src src-elm"><span style="color: #66D9EF;">type alias </span><span style="color: #66D9EF;">EnergyDisplayCertificate</span> <span style="color: #A6E22E;">=</span>
-    <span style="color: #66d9ef;">{</span> buildingNumber <span style="color: #A6E22E;">:</span> <span style="color: #66D9EF;">String</span>
-    <span style="color: #66D9EF;">,</span> postcode <span style="color: #A6E22E;">:</span> <span style="color: #66D9EF;">String</span>
-    <span style="color: #66D9EF;">,</span> energyRatingDescription <span style="color: #A6E22E;">:</span> <span style="color: #66D9EF;">String</span>
-    <span style="color: #66D9EF;">,</span> renewablesThermal <span style="color: #A6E22E;">:</span> <span style="color: #66D9EF;">String</span>
-    <span style="color: #66D9EF;">,</span> renewablesElectrical <span style="color: #A6E22E;">:</span> <span style="color: #66D9EF;">String</span>
-    <span style="color: #66D9EF;">,</span> floorArea <span style="color: #A6E22E;">:</span> <span style="color: #66D9EF;">Maybe</span> <span style="color: #66D9EF;">Double</span>
-    <span style="color: #66D9EF;">,</span> lodgementDate <span style="color: #A6E22E;">:</span> <span style="color: #66D9EF;">Date</span>
+<pre  class="src src-elm"><span style="color: #a020f0;">module </span><span style="color: #228b22;">Generated</span><span style="color: #483d8b;">.</span><span style="color: #228b22;">Types</span> <span style="color: #a020f0;">exposing </span><span style="color: #66d9ef;">(</span><span style="color: #483d8b;">..</span><span style="color: #66d9ef;">)</span>
+
+<span style="color: #a020f0;">import </span><span style="color: #228b22;">Date</span> <span style="color: #a020f0;">exposing </span><span style="color: #66d9ef;">(</span><span style="color: #228b22;">Date</span><span style="color: #66d9ef;">)</span>
+
+<span style="color: #a020f0;">type alias </span><span style="color: #228b22;">EnergyDisplayCertificate</span> <span style="color: #483d8b;">=</span>
+    <span style="color: #66d9ef;">{</span> buildingNumber <span style="color: #483d8b;">:</span> <span style="color: #228b22;">String</span>
+    <span style="color: #a020f0;">,</span> postcode <span style="color: #483d8b;">:</span> <span style="color: #228b22;">String</span>
+    <span style="color: #a020f0;">,</span> energyRatingDescription <span style="color: #483d8b;">:</span> <span style="color: #228b22;">String</span>
+    <span style="color: #a020f0;">,</span> renewablesThermal <span style="color: #483d8b;">:</span> <span style="color: #228b22;">String</span>
+    <span style="color: #a020f0;">,</span> renewablesElectrical <span style="color: #483d8b;">:</span> <span style="color: #228b22;">String</span>
+    <span style="color: #a020f0;">,</span> floorArea <span style="color: #483d8b;">:</span> <span style="color: #228b22;">Maybe</span> <span style="color: #228b22;">Float</span>
+    <span style="color: #a020f0;">,</span> lodgementDate <span style="color: #483d8b;">:</span> <span style="color: #228b22;">Date</span>
     <span style="color: #66d9ef;">}</span>
 </pre>
 </div>
