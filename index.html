@@ -366,7 +366,12 @@ Let's look at the generic encoding, <code>Rep (Maybe a)</code>
 <h3 id="orgheadline26">Usage</h3>
 <div class="org-src-container">
 
-<pre  class="src src-haskell"><span style="color: #0000ff;">main</span> <span style="color: #a0522d;">::</span> <span style="color: #228b22;">IO</span> <span style="color: #66d9ef;">()</span>
+<pre  class="src src-haskell"><span style="color: #e6db74;">--</span><span style="color: #e6db74;">-</span>
+
+<span style="color: #a020f0;">deriving</span> <span style="color: #228b22;">Generic</span> <span style="color: #228b22;">EnergyDisplayCertificate</span>
+<span style="color: #a020f0;">deriving</span> <span style="color: #228b22;">ElmType</span> <span style="color: #228b22;">EnergyDisplayCertificate</span>
+
+<span style="color: #0000ff;">main</span> <span style="color: #a0522d;">::</span> <span style="color: #228b22;">IO</span> <span style="color: #66d9ef;">()</span>
 <span style="color: #0000ff;">main</span> <span style="color: #a0522d;">=</span>
   exportToElm <span style="color: #8b2252;">"/some/where/elm/src"</span> <span style="color: #a0522d;">$</span>
   specsToDir
