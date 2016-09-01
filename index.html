@@ -34,7 +34,6 @@
 <h2 id="orgheadline5">A Tale Of A Haskell Startup</h2>
 <ul>
 <li>ClojureScript + Haskell + PostgreSQL</li>
-<li>Technically adept</li>
 
 </ul>
 </section>
@@ -44,9 +43,13 @@
 <li class="fragment appear">Inconsistent data formats.</li>
 <li class="fragment appear">Need for data to change.</li>
 <li class="fragment appear">Speed of change.</li>
-<li class="fragment appear">Reliability.</li>
+<li class="fragment appear">&#x2026;and Reliability.</li>
 
 </ul>
+
+<p class="fragment (appear)">
+The core system was consistent, reliable and genuinely agile.
+</p>
 
 </section>
 <section id="slide-orgheadline2">
@@ -107,7 +110,8 @@ Some setup required.
 </p>
 
 <p class="fragment (appear)">
-Persistent.
+<code>persistent</code>
+<a href="http://hackage.haskell.org/package/persistent" class="fragment (appear)">http://hackage.haskell.org/package/persistent</a>
 </p>
 </section>
 <section id="slide-orgheadline8">
@@ -117,7 +121,7 @@ Persistent.
 <h3 id="orgheadline9">Define A Table</h3>
 <div class="org-src-container">
 
-<pre  class="src src-haskell"><span style="color: #0000ff;">share</span> <span style="color: #66d9ef;">[</span>mkPersist sqlSettings, mkMigrate <span style="color: #8b2252;">"migrateEpc"</span><span style="color: #66d9ef;">]</span>
+<pre  class="src src-haskell"><span style="color: #0000ff;">share</span> <span style="color: #66d9ef;">[</span>mkPersist sqlSettings, mkMigrate <span style="color: #8b2252;">"migrateEnergy"</span><span style="color: #66d9ef;">]</span>
       <span style="color: #66d9ef;">[</span>persistLowerCase<span style="color: #8b2252;">|</span>
 <span style="color: #8b2252;">  EnergyDisplayCertificate</span>
 <span style="color: #8b2252;">    buildingNumber Text Maybe sqltype=text</span>
@@ -128,7 +132,7 @@ Persistent.
 <span style="color: #8b2252;">    floorArea Double Maybe</span>
 <span style="color: #8b2252;">    lodgementDate UTCTime</span>
 
-<span style="color: #8b2252;">    deriving Eq Show Generic</span>
+<span style="color: #8b2252;">    deriving Eq Show</span>
 <span style="color: #8b2252;">|</span><span style="color: #66d9ef;">]</span>
 </pre>
 </div>
@@ -137,8 +141,8 @@ Persistent.
 <h3 id="orgheadline10">Get An Automatic Migration-Calculator</h3>
 <div class="org-src-container">
 
-<pre  class="src src-ghci">ghci&gt; :t migrateEpc
-migrateEpc :: Database.Persist.Sql.Types.Migration
+<pre  class="src src-ghci">ghci&gt; :t migrateEnergy
+migrateEnergy :: Database.Persist.Sql.Types.Migration
 </pre>
 </div>
 
@@ -148,10 +152,14 @@ migrateEpc :: Database.Persist.Sql.Types.Migration
 <div class="org-src-container">
 
 <pre  class="src src-haskell"><span style="color: #0000ff;">migrations</span> <span style="color: #a0522d;">::</span> <span style="color: #228b22;">SqlPersistM</span> <span style="color: #66d9ef;">()</span>
-<span style="color: #0000ff;">migrations</span> <span style="color: #a0522d;">=</span> mapM_ runMigration <span style="color: #66d9ef;">[</span>migrateEpc, <span style="color: #a0522d;">...</span><span style="color: #66d9ef;">]</span>
+<span style="color: #0000ff;">migrations</span> <span style="color: #a0522d;">=</span>
+   mapM_ runMigration
+         <span style="color: #66d9ef;">[</span>migrateEnergy, <span style="color: #a0522d;">...</span><span style="color: #66d9ef;">]</span>
 
-<span style="color: #a020f0;">do</span> pool <span style="color: #a0522d;">&lt;-</span> <span style="color: #a0522d;">...</span>
-   runSqlPersistMPool migrations sql
+<span style="color: #0000ff;">main</span> <span style="color: #a0522d;">::</span> <span style="color: #228b22;">IO</span> <span style="color: #66d9ef;">()</span>
+<span style="color: #0000ff;">main</span> <span style="color: #a0522d;">=</span>
+    <span style="color: #a020f0;">do</span> pool <span style="color: #a0522d;">&lt;-</span> <span style="color: #a0522d;">...</span>connect<span style="color: #a0522d;">...</span>
+       runSqlPersistMPool migrations pool
 </pre>
 </div>
 </section>
@@ -456,6 +464,17 @@ Many relationships enforced at compile time.
 <p class="fragment (appear)">
 <i>Though the general idea could work for lots of stacks&#x2026;</i>
 </p>
+</section>
+</section>
+<section>
+<section id="slide-orgheadline36">
+<h2 id="orgheadline36">Further Ideas</h2>
+<ul>
+<li class="fragment appear">Could we use Generics to generate the DB migrations?</li>
+<li class="fragment appear">Could we use Generics to visualise arbitrary types?</li>
+<li class="fragment appear">Should we have libraries like this availble for PureScript, etc&#x2026;</li>
+
+</ul>
 </section>
 </section>
 </div>
